@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.chapter5.chapter4.mapper.UserMapper">
+	<resultMap id="userMapper" type="user">
+		<result property="id" column="id" />
+		<result property="userName" column="user_name" />
+		<result property="password" column="password" />
+		<!--<result property="sex" column="sex"
+            typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>-->
+       <!-- <result property="sex" column="sex"
+            typeHandler="org.apache.ibatis.type.EnumTypeHandler"/> -->
+        <result property="sex" column="sex"
+            typeHandler="com.ssm.chapter5.chapter4.typehandler.SexEnumTypeHandler"/>
+		<result property="mobile" column="mobile" />
+		<result property="tel" column="tel" />
+		<result property="email" column="email" />
+		<result property="note" column="note" />
+	</resultMap>
+	<!--id:配合Mapper的全限定名+id:唯一标识
+	parameterType:这条sql接收的参数类型,可以是别名也可以是类的全类名
+	resultType:表示sql返回的结果类型,可以是别名也可以是类的全类名
+	#{id}:是被传递进去的参数-->
+	<select id="getUser" resultMap="userMapper" parameterType="long">
+	  select id, user_name, password, sex, mobile, tel, email, note from t_user 
+      where id = #{id}
+	</select>
+</mapper>

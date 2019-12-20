@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.chapter7.mapper.RoleMapper">
+
+	<resultMap id="roleResultMap" type="com.ssm.chapter7.pojo.Role">
+		<id column="roleNo" property="role_no" />
+		<id column="role_name" property="roleName" />
+		<id column="note" property="note" />
+	</resultMap>
+
+	<select id="findRole1" parameterType="string" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role where 1=1
+		<if test="roleName != null and roleName !=''">
+			and role_name like concat('%', #{roleName}, '%')
+		</if>
+	</select>
+
+	<select id="findRole2" parameterType="role" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role
+		where 1=1
+		<choose>
+			<when test="roleNo != null and roleNo !=''">
+				AND role_no = #{roleNo}
+			</when>
+			<when test="roleName != null and roleName !=''">
+				AND role_name like concat('%', #{roleName}, '%')
+			</when>
+			<otherwise>
+				AND note is not null
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<select id="findRole3" parameterType="role" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role
+		<where>
+			<if test="roleName != null and roleName !=''">
+				and role_name like concat('%', #{roleName}, '%')
+			</if>
+			<if test="note != null and note !=''">
+				and note like concat('%', #{note}, '%')
+			</if>
+		</where>
+	</select>
+
+	<select id="findRole4" parameterType="string" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role
+		/*prefix:代表是语句的前缀
+		prefixOverrides:表示要去掉的字符串*/
+		<trim prefix="where" prefixOverrides="and">
+			<if test="roleName != null and roleName !=''">
+				and role_name like concat('%', #{roleName}, '%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="findRole5" parameterType="string" resultMap="roleResultMap">
+		/*bind:作用是通过ognl表达式去自顶一个上文变量,这样更方便使用,在进行模糊查询时,mysql concat 和orrcle ||*/
+		/*pattern:代表的是传递过来的参数,它和通配符%连接后赋值给了pattern,然后就可以在select语句中使用这个变量进行模糊
+		查询了.无论是mysql oracle都可以使用这样的语句.*/
+
+		<bind name="pattern" value="'%' + _parameter + '%'" />
+		SELECT role_no, role_name, note FROM t_role
+		where role_name like #{pattern}
+	</select>
+
+	<!--支持多个参数传递-->
+	<select id="findRole6" resultMap="roleResultMap">
+		<bind name="pattern_roleName" value="'%' + roleName + '%'" />
+		<bind name="pattern_note" value="'%' + note + '%'" />
+		SELECT role_no, role_name, note FROM t_role
+		where role_name like
+		#{pattern_roleName}
+		and note like #{pattern_note}
+	</select>
+
+	<update id="updateRole" parameterType="role">
+		update t_role
+		<set>
+			<if test="roleName != null and roleName !=''">
+				role_name = #{roleName},
+			</if>
+			<if test="note != null and note != ''">
+				note = #{note}
+			</if>
+		</set>
+		where role_no = #{roleNo}
+	</update>
+
+	<select id="findRoleByNums" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role where role_no in
+		/*foreach:是一个循环语句,作用是遍历集合,支持数组和list set接口的结合  sql 中的in
+		item:遍历的项
+		index:当前元素在集合中的下标
+		collection:配置的是传递进来的参数 列表集合,
+		open close 用指定的符号将这些集合包裹起来
+		separator:元素间的间隔符*/
+
+		<foreach item="roleNo" index="index" collection="roleNoList"
+			open="(" separator="," close=")">
+			#{roleNo}
+		</foreach>
+	</select>
+
+	<select id="getRoleTest" parameterType="string" resultMap="roleResultMap">
+		select role_no, role_name, note from t_role
+		<if test="type == 'Y'.toString()">
+			where 1=1
+		</if>
+	</select>
+
+</mapper>

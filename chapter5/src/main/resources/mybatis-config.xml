@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<properties resource="jdbc.properties" />
+
+<settings>
+    <!--不配置延迟加载会加载所有的信息,如果配置了,就会只加载第一级的.-->
+    <setting name="lazyLoadingEnabled" value="true" />
+    <!--层级开关:用了延迟加载 工牌信息也能 加载进来,用fetchType属性解决这个物体.
+    eager:获取当前pojo后立即加载对应的数据
+    lazy:获取当前pojo后延迟加载对应的数据-->
+    <setting name="aggressiveLazyLoading" value="false" />
+    <!-- 打印sql日志 -->
+    <setting name="logImpl" value="STDOUT_LOGGING" />
+</settings>
+
+<typeAliases>
+    <package name="com.ssm.chapter5.pojo" />
+</typeAliases>
+<!-- 数据库环境 -->
+<environments default="development">
+    <environment id="development">
+        <transactionManager type="JDBC" />
+        <dataSource type="POOLED">
+            <property name="driver" value="${database.driver}" />
+            <property name="url" value="${database.url}" />
+            <property name="username" value="${database.username}" />
+            <property name="password" value="${database.password}" />
+        </dataSource>
+    </environment>
+</environments>
+
+<mappers>
+    <package name="com.ssm.chapter5.mapper" />
+    <package name="com.ssm.chapter5.mapper2" />
+</mappers>
+</configuration>

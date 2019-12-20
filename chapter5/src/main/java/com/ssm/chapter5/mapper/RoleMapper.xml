@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.chapter5.mapper.RoleMapper">
+    <!-- 测试一级缓存  -->
+    <!-- 
+    <cache/>
+     -->
+	<cache/>
+    
+	<resultMap id="roleMap" type="role"><!--type指定哪个类作为可以其映射的类-->
+		<id property="id" column="id" /><!--id表示resultMap的主键,result代表其属性 -->
+		<result property="roleName" column="role_name" />
+		<result property="note" column="note" />
+	</resultMap>
+
+	<select id="getRoleUseResultMap" parameterType="long" resultMap="roleMap">
+		select id, role_name, note from t_role where id = #{id}
+	</select>
+
+	<select id="getRole" parameterType="long" resultType="com.ssm.chapter5.pojo.Role">
+		select id,
+		role_name as roleName, note from t_role where id = #{id}
+	</select>
+
+	<select id="findRolesByMap" parameterType="map" resultType="role">
+		select id, role_name as roleName, note from t_role
+		where role_name like
+		concat('%', #{roleName}, '%')
+		and note like concat('%', #{note}, '%')
+	</select>
+
+	<select id="findRolesByAnnotation" resultType="role">
+		select id,
+		role_name as roleName, note from t_role
+		where role_name like
+		concat('%', #{roleName}, '%')
+		and note like concat('%', #{note}, '%')
+	</select>
+
+	<!--使用map存储结果集
+	<select id="findRolesByAnnotation" parameterType="string" resultType="map">
+		select id,
+		role_name as roleName, note from t_role
+		where role_name like
+		concat('%', #{roleName}, '%')
+		and note like concat('%', #{note}, '%')
+	</select>-->
+
+	<select id="findRolesByBean" parameterType="com.ssm.chapter5.param.RoleParams"
+		resultType="role">
+		select id, role_name as roleName, note from t_role
+		where
+		role_name like
+		concat('%', #{roleName}, '%')
+		and note like concat('%',
+		#{note}, '%')
+	</select>
+
+	<select id="findByMix" resultType="role">
+		select id, role_name as
+		roleName, note from t_role
+		where role_name like
+		concat('%',
+		#{params.roleName}, '%')
+		and note like concat('%', #{params.note}, '%')
+		limit #{page.start}, #{page.limit}
+	</select>
+
+
+	<insert id="insertRole" parameterType="role" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into t_role(role_name, note) values(#{roleName},
+		#{note})
+	</insert>
+
+	<insert id="insertRole2" parameterType="role">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">/*sql前执行这selectkey 的select语句*/
+			select
+			if (max(id) = null, 1, max(id) + 3) from t_role
+		</selectKey>
+		insert into t_role2(id, role_name, note) values(#{id}, #{roleName},
+		#{note})
+	</insert>
+
+	<update id="updateRole" parameterType="role">
+		update t_role set role_name = #{roleName}, note = #{note}
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteRole" parameterType="long">
+		delete from t_role where id = #{id}
+	</delete>
+
+	<!--控制数值精度
+	#{width,javaType=double,jdbcType=NUMERIC,numericScale=2}-->
+
+	<!--<resultMap type="" id="">
+		<constructor>&lt;!&ndash; 类在实例化时用来注入结果到构造方法 &ndash;&gt;
+			<idArg/>&lt;!&ndash;  ID参数，结构为ID &ndash;&gt;
+			<arg/>&lt;!&ndash; 注入到构造方法的一个普通结果 &ndash;&gt;
+		</constructor>
+		<id/>&lt;!&ndash; 用于表示哪个列是主键，注入主键 &ndash;&gt;
+		<result/>&lt;!&ndash; 注入到字段或者JavaBean 属性的普通结果 &ndash;&gt;
+		<association property=""/>&lt;!&ndash; 用于一对一关联 &ndash;&gt;
+		<collection property=""/>&lt;!&ndash; 用于一对多、多对多关联 &ndash;&gt;
+		<discriminator javaType="">&lt;!&ndash; 使用结果值来决定使用哪个结果映射 &ndash;&gt;
+			<case value=""/>&lt;!&ndash; 基于某些值的结果映射 &ndash;&gt;
+		</discriminator>
+	</resultMap>-->
+
+</mapper>

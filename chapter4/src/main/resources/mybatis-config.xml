@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="jdbc.properties"><!--属性 resource 来引入properties文件-->
+        <!--<property name="database.driver" value="com.mysql.jdbc.Driver"/>
+        <property
+                name="database.url" value="jdbc:mysql://localhost:3306/chapter4"/>
+        <property
+                name="database.username" value="root"/>
+        <property name="database.password"
+                  value="123456"/>-->
+    </properties>
+    <settings>
+        <!-- 打印sql日志 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+    <typeAliases><!-- 别名 -->
+        <!-- <typeAlias alias="role" type="Role"/> --><!--配置定义-->
+        <package name="com.learn.ssm.chapter4.pojo"/><!--扫描别名-->
+    </typeAliases>
+    <typeHandlers>
+        <!-- <typeHandler jdbcType="VARCHAR" javaType="string" handler="MyTypeHandler"
+            /> -->
+        <package name="com.learn.ssm.chapter4.typehandler"/>
+
+    </typeHandlers>
+    <!-- 数据库环境 -->
+    <environments default="development"><!--配置环境-->
+        <environment id="development"><!--环境变量-->
+            <transactionManager type="JDBC"/><!--事务管理器-->
+            <!--<transactionManager type="MANAGED"/>--><!--事务管理器-->
+            <!--<dataSource type="DbcpDataSourceFactory">--><!--数据源-->
+            <!--论述三种数据源及其属性
+            1.UNPOOLED:
+            采用非数据库池的管理方式,每次请求都会打开一个新的数据库连接,所以创建会比较慢,字一些对性能没有高要求的场合用,对有些
+            数据库而言,使用连接池不重要,
+
+            2.POOLED
+            利用池的概念将jdbc的Connection对象组织起来,开始会有一些空置,并且已经连接好的数据库连接,所以请求时,无需再建立和验证,
+            省去了创建新的连接实例时所必须的初始化时间和认证时间,他还空置最大连接数,避免过多的连接导致系统瓶颈.
+
+            3.JNDI
+            为了能在ejb或应用服务器这类容器中使用,容器可以集中或在外部配置数据源,然后放置一个jndi上下文引用.这种数据源配置只需要两个属性.
+            initial_context:
+            data_source:
+
+            也支第三方数据源:dbcp-->
+            <dataSource type="POOLED"><!--数据源-->
+                <property name="driver" value="${database.driver}"/>
+                <property name="url" value="${database.url}"/>
+                <property name="username" value="${database.username}"/>
+                <property name="password" value="${database.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--
+	<databaseIdProvider type="DB_VENDOR">
+		<property name="Oracle" value="oracle" />
+		<property name="MySQL" value="mysql" />
+		<property name="DB2" value="db2" />
+	</databaseIdProvider>
+	 -->
+    <!--数据库厂商标识-->
+    <!--<databaseIdProvider
+            type="MyDatabaseIdProvider">
+        <property name="msg" value="自定义DatabaseIdProvider"/>
+    </databaseIdProvider>-->
+    <mappers>
+        <!--用文件引入映射器-->
+        <!--<mapper resource="com/learn/ssm/chapter4/mapper/roleMapper.xml"/>-->
+        <!--用包名引入映射器-->
+        <package name="com.learn.ssm.chapter4.mapper"/><!--映射器-->
+        <!--用类注册引入映射器-->
+       <!-- <mapper class="FileMapper"/>-->
+
+    </mappers>
+</configuration>
