@@ -12,7 +12,7 @@
     <artifactId>chapter8</artifactId>
     <properties>
         <!-- log4j2日志配置相关依赖 -->
-        <log4j2.version>2.9.1</log4j2.version>
+        <log4j2.version>2.13.3</log4j2.version>
         <log4j2.disruptor.version>3.2.0</log4j2.disruptor.version>
         <slf4j.version>1.7.13</slf4j.version>
     </properties>
